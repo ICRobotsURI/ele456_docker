@@ -1,0 +1,31 @@
+# =============================================================================
+# ROS 2 Jazzy - Foundations for Robotics
+# Run with: docker compose up
+# Access at: http://localhost:6080
+# =============================================================================
+
+services:
+  ros2-desktop:
+    build: .
+    container_name: ros2-classroom
+    ports:
+      - "6080:6080"   # noVNC web interface (open this in your browser)
+      - "5901:5901"   # VNC direct (optional, for VNC client users)
+    volumes:
+      - ros2_workspace:/home/student/ros2_ws  # Persistent workspace
+    environment:
+      - VNC_RESOLUTION=1280x720
+      - VNC_PASSWORD=student
+    shm_size: "512m"  # Shared memory for Gazebo rendering
+    # Uncomment below if you need GPU acceleration (NVIDIA only):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  ros2_workspace:
+    name: ros2_student_workspace

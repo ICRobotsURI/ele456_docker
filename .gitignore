@@ -1,0 +1,26 @@
+# Private instructor evaluation materials
+/packages/course_project/worlds/world_3.sdf
+/packages/my_package/my_package/grader_w3.py
+
+# Tests and existing project implementation (not for student distribution)
+/packages/my_package/test/
+
+# ROS 2 / colcon generated files
+build/
+install/
+log/
+
+# Python generated files and local environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Local editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
