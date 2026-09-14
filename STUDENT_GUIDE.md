@@ -161,31 +161,19 @@ This starts in seconds.
 
 ---
 
-## Step 6: Verify Everything Works
+## Step 6: Verify the Course Simulation Works
 
-Once inside the desktop:
+Run these commands in a terminal **inside the Linux desktop in your browser**, not in Windows PowerShell or your computer's terminal.
 
-1. **Open a terminal:** Right-click on the desktop → "Open Terminal Here" (or find "Terminal" in the bottom taskbar)
-
-2. **Check ROS 2 is working:**
+1. Open a terminal inside the Linux desktop.
+2. Launch the course robot in world 1 with the Gazebo graphical interface:
    ```bash
-   ros2 --help
+   ros2 launch course_project sim_gui.launch.py world:=world_1
    ```
-   You should see a list of ROS 2 commands.
+3. Wait for the Gazebo window to display the robot and cylinder obstacles. The simulation starts automatically; the robot stays still until it receives a velocity command.
+4. Keep the terminal open while using the simulation. When finished, press **Ctrl+C in the terminal that launched it** and wait for the launch processes to exit.
 
-3. **Check Gazebo is working:**
-   ```bash
-   gz sim --versions
-   ```
-   You should see version information for Gazebo Harmonic.
-
-4. **Run a quick test (optional):**
-   ```bash
-   ros2 launch turtlebot4_gz_bringup turtlebot4_gz.launch.py
-   ```
-   You should see Gazebo open with a TurtleBot 4 robot in a default world. This may take a moment to load the first time.
-
-   Press `Ctrl+C` to stop it.
+Use this GUI launch for the initial installation check. If the simulation runs slowly, follow the headless instructions below.
 
 ---
 
@@ -225,12 +213,9 @@ Your ROS 2 workspace is at: `~/ros2_ws`
 
 This is where you will create and build your packages.
 
-### Creating a new package
+### Your course package
 
-```bash
-cd ~/ros2_ws/src
-ros2 pkg create --build-type ament_python my_package
-```
+The `my_package` package is already provided at `~/ros2_ws/src/my_package`. Add your project nodes there; you do not need to create that package again. Register new executable nodes in its `setup.py`, then rebuild the workspace.
 
 ### Building your workspace
 
@@ -246,17 +231,41 @@ source install/setup.bash
 ros2 run my_package my_node
 ```
 
-### Launching the TurtleBot4 simulation
+### Launching the course simulation with the Gazebo GUI
+
+World 1:
 
 ```bash
-ros2 launch turtlebot4_gz_bringup turtlebot4_gz.launch.py
+ros2 launch course_project sim_gui.launch.py world:=world_1
 ```
 
-To launch the Lite version:
+World 2 (a different cylinder layout):
 
 ```bash
-ros2 launch turtlebot4_gz_bringup turtlebot4_gz.launch.py model:=lite
+ros2 launch course_project sim_gui.launch.py world:=world_2
 ```
+
+**Run only one simulation at a time.** Before switching worlds or launch modes, press **Ctrl+C in the terminal that launched the current simulation** and wait for it to exit. Then run the new command.
+
+### If the real-time factor is too low: headless simulation with RViz
+
+Real-time factor compares simulated time with elapsed real time. A factor of 1.0 means the simulation keeps pace with real time; 0.5 means that one simulated second takes about two real seconds. If the factor stays well below 1.0 and the simulation feels too slow, stop the GUI simulation and try headless mode.
+
+Headless mode runs Gazebo without its graphical window and opens **RViz** to display the robot, lidar scans, and cylinder markers. Removing the Gazebo GUI can improve performance, although the simulator and lidar rendering still require computing resources.
+
+World 1, headless with RViz:
+
+```bash
+ros2 launch course_project sim_headless.launch.py world:=world_1 rviz:=true
+```
+
+World 2, headless with RViz:
+
+```bash
+ros2 launch course_project sim_headless.launch.py world:=world_2 rviz:=true
+```
+
+RViz opens automatically with these commands. Your robot nodes continue to use the same `/cmd_vel`, `/odom`, and `/scan` topics in either mode. Keep the launch terminal open and use a separate terminal for your controller or grader.
 
 ### Controlling the robot with keyboard
 
@@ -302,7 +311,11 @@ again. Docker will resume from where it left off.
 Gazebo uses GPU rendering. Inside Docker, this runs in software mode which is slower but functional. If Gazebo crashes:
 
 - Increase Docker's memory allocation to 6+ GB
-- Try running Gazebo headless for testing: `gz sim -s empty.sdf` (server only, no GUI)
+- Stop the current simulation and try the course simulation in headless mode with RViz:
+  ```bash
+  ros2 launch course_project sim_headless.launch.py world:=world_1 rviz:=true
+  ```
+  See the quick reference above for world 2 and an explanation of real-time factor.
 
 ### "I accidentally deleted my container"
 
